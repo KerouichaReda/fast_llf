@@ -11,7 +11,7 @@ def llf(I,sigma,fact,N):
     output_laplace_pyr=laplacian_pyramid(I,n_levels,None)
     output_laplace_pyr[n_levels-1]=input_gaussian_pyr[n_levels-1]
     for ref in discretisation:
-        I_remap=fact*(I-ref)*np.exp(-(I-ref)*(I-ref))/(2*sigma*sigma)
+        I_remap=fact*(I-ref)*np.exp(-(I-ref)*(I-ref)/(2*sigma*sigma))
         temp_laplace=laplacian_pyramid(I_remap,n_levels,None)
         for level in range(0,n_levels-1):        
             output_laplace_pyr[level]=output_laplace_pyr[level]+((np.abs(input_gaussian_pyr[level]-ref) < discretisation_step))*temp_laplace[level]*(1-np.abs(input_gaussian_pyr[level]-ref)/discretisation_step)
@@ -50,18 +50,15 @@ def child_windows(parent,N=1):
         child[3]=math.floor(child[3])
 
     return child
-def downsample(I,filter):
-    
+def downsample(I,filter):    
     r,c=I.shape    
     subwindow=[0, r ,0 ,c]
-    subwindow_child=child_windows(subwindow)
-    border_mode = 'reweighted'
-    if border_mode =='reweighted':
-        R=cv.filter2D(I,-1,filter)
-        Z=cv.filter2D(np.float32(np.ones(I.shape)),-1,filter)
-        R=R/Z
-    reven=(subwindow[0]%2==0)*1
-    ceven=(subwindow[2]%2==0)*1
+    subwindow_child=child_windows(subwindow)    
+    R=cv.filter2D(I,-1,filter,borderType=cv.BORDER_CONSTANT)
+    Z=cv.filter2D(np.float32(np.ones(I.shape)),-1,filter,borderType=cv.BORDER_CONSTANT)
+    R=R/Z
+    reven=(subwindow[0]%2==1)*1
+    ceven=(subwindow[2]%2==1)*1
     row=np.arange(0+reven,r,2)
     col=np.arange(0+ceven,c,2)
     R=R[row][:]
@@ -86,34 +83,30 @@ def laplacian_pyramid(I,nlev,subwindow):
         pyr[l]=J-up
         J=I
         subwindow=subwindow_child
-
+    pyr[nlev-1]=J
     return pyr
 def upsample(I,fil,subwindow):
     r=subwindow[1]-subwindow[0]
     c=subwindow[3]-subwindow[2]
     #k=size(I,3)
-    reven=(subwindow[0]%2==0)
-    ceven=(subwindow[2]%2==0)
-    border_mode='reweighted'
+    reven=(subwindow[0]%2==1)*1
+    ceven=(subwindow[2]%2==1)*1
     R=0
-    if border_mode=='reweighted':
-        
-        R=np.zeros((int(r),int(c)))
-        row=np.arange(0+reven,r,2)
-        col=np.arange(0+ceven,c,2)
-        
-        row_r,col_c=np.meshgrid(row,col)
-        
-        R[col_c.astype(int),row_r.astype(int),]=I
-        R=cv.filter2D(np.float32(R),-1,fil)
-        Z=np.zeros((int(r),int(c)))        
-        Z[row_r.astype(int),col_c.astype(int)]=np.ones(I.shape)
-        Z=cv.filter2D(np.float32(Z),-1,fil)
-        R=R/Z
+    R=np.zeros((int(r),int(c)))
+    row=np.arange(0+reven,r,2)
+    col=np.arange(0+ceven,c,2)        
+    row_r,col_c=np.meshgrid(row,col)        
+    R[col_c.astype(int),row_r.astype(int),]=I
+    R=cv.filter2D(R,-1,fil,anchor=(-1,-1),borderType=cv.BORDER_CONSTANT)
+    Z=np.zeros((int(r),int(c)))        
+    Z[row_r.astype(int),col_c.astype(int)]=np.ones(I.shape)
+    Z=cv.filter2D(Z,-1,fil,borderType=cv.BORDER_CONSTANT)
+    R=R/Z
     return R
 def reconstruct_laplacian_pyramid(pyr,subwindow):
     (r,c)=pyr[0].shape
     nlev=pyr.size
+    
     subwindow_all=np.zeros((nlev,4))
     if subwindow is None:
         subwindow_all[0,:]=[0,r,0,c]
@@ -123,9 +116,9 @@ def reconstruct_laplacian_pyramid(pyr,subwindow):
     for lev in range(1,nlev):
         subwindow_all[lev,:]=child_windows(subwindow_all[lev-1,:])
     
-    R=pyr[nlev-2]    
+    R=pyr[nlev-1]    
     fil=pyramid_filter()
-    for lev in range(nlev-3,-1,-1):
+    for lev in range(nlev-2,-1,-1):        
         R=pyr[lev]+upsample(R,fil,subwindow_all[lev,:])
     return R
 def repeat(I):
@@ -135,8 +128,3 @@ def repeat(I):
     m[:,:,1]=I
     m[:,:,2]=I
     return m
-
-
-        
-
-
