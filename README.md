@@ -2,11 +2,17 @@
 This project is the implemtation of the work of Paris [1] in python.
 this function require the following modules:
 
-* opencv
+* opencv-python
 * numpy
 
 ## Results
 
-![alt text](jacek.jpg "Logo Title Text 1")
-![alt text](jacek_enhanced.jpg "Logo Title Text 1")
-![alt text](jacek_smooth.jpg "Logo Title Text 1")
+<figure class="image">
+    <img src="jacek.jpg" width="200">
+    <figcaption>orginal</figcaption>
+    <img src="jacek_smooth.jpg" width="200">
+    <figcaption>smoothed</figcaption>
+    <img src="jacek_enhanced.jpg" width="200">
+    <figcaption>enhanced</figcaption>
+</figure>
+

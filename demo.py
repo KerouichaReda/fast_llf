@@ -13,11 +13,11 @@ img=cv.cvtColor(im,cv.COLOR_BGR2GRAY)/255
 img32=np.float32(img)
 I=img32
 
-I_ratio=imrgb/llf.repeat(img)
-
-sigma=0.3
-N=10
-fact=0.5
+#I_ratio=imrgb/llf.repeat(img)
+I_ratio=np.divide(imrgb,llf.repeat(img)+np.finfo(float).eps) 
+sigma=0.5
+N=10 
+fact=-0.6
 t = time.time()
 #Filtering
 
