@@ -8,10 +8,26 @@ def llf(I,sigma,fact,N):
     discretisation=np.linspace(0,1,N)
     discretisation_step=discretisation[1]
     input_gaussian_pyr=gaussian_pyramid(I,n_levels,None)
-    output_laplace_pyr=laplacian_pyramid(I,n_levels,None)
+    output_laplace_pyr=laplacian_pyramid(np.zeros((height,width)),n_levels,None)
     output_laplace_pyr[n_levels-1]=input_gaussian_pyr[n_levels-1]
     for ref in discretisation:
         I_remap=fact*(I-ref)*np.exp(-(I-ref)*(I-ref)/(2*sigma*sigma))
+        temp_laplace=laplacian_pyramid(I_remap,n_levels,None)
+        for level in range(0,n_levels-1):        
+            output_laplace_pyr[level]=output_laplace_pyr[level]+((np.abs(input_gaussian_pyr[level]-ref) < discretisation_step))*temp_laplace[level]*(1-np.abs(input_gaussian_pyr[level]-ref)/discretisation_step)
+
+    F=reconstruct_laplacian_pyramid(output_laplace_pyr,None)
+    return F
+def xllf(I1,I2,sigma,fact,N):
+    (height,width)=I1.shape
+    n_levels=math.ceil(math.log(min(height,width))-math.log(2))+2
+    discretisation=np.linspace(0,1,N)
+    discretisation_step=discretisation[1]
+    input_gaussian_pyr=gaussian_pyramid(I2,n_levels,None)
+    output_laplace_pyr=laplacian_pyramid(np.zeros((height,width)),n_levels,None)
+    output_laplace_pyr[n_levels-1]=input_gaussian_pyr[n_levels-1]
+    for ref in discretisation:
+        I_remap=I1+fact*(I1-ref)*np.exp(-(I2-ref)*(I2-ref)/(2*sigma*sigma))
         temp_laplace=laplacian_pyramid(I_remap,n_levels,None)
         for level in range(0,n_levels-1):        
             output_laplace_pyr[level]=output_laplace_pyr[level]+((np.abs(input_gaussian_pyr[level]-ref) < discretisation_step))*temp_laplace[level]*(1-np.abs(input_gaussian_pyr[level]-ref)/discretisation_step)

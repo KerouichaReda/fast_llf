@@ -7,28 +7,29 @@ import llf
 np.set_printoptions(precision=5)
 np.set_printoptions(suppress=True)
 
-im= cv.imread('sjacek.jpg')
-imrgb=cv.cvtColor(im,cv.COLOR_BGR2RGB)/255
-img=cv.cvtColor(im,cv.COLOR_BGR2GRAY)/255
-img32=np.float32(img)
-I=img32
+im1= cv.imread('Images\LennaBL.tif')
+im2= cv.imread('Images\LennaBW.tif')
+I1=np.float32(cv.cvtColor(im1,cv.COLOR_BGR2GRAY)/255)
+I2=np.float32(cv.cvtColor(im2,cv.COLOR_BGR2GRAY)/255)
 
-#I_ratio=imrgb/llf.repeat(img)
-I_ratio=np.divide(imrgb,llf.repeat(img)+np.finfo(float).eps) 
-sigma=0.5
-N=10 
-fact=-0.6
+
+sigma=0.1
+N=4
+fact=-0.75
 t = time.time()
 #Filtering
-
-im_e=llf.llf(img,sigma,fact,N)
-im_ergb=llf.repeat(im_e)*I_ratio
+print(I1.shape)
+print(I2.shape)
+im_e=llf.xllf(I1,I2,sigma,fact,N)
+im_ergb=llf.repeat(im_e)
 elapsed = time.time() - t
 print(elapsed)
 #plot the image
-plt.subplot(1,2,1)
-imgplt=plt.imshow(imrgb)
-plt.subplot(1,2,2)
-imgplt=plt.imshow(im_ergb)
+im_con=np.concatenate((im1/255,im2/255,im_ergb),axis=1)
+imgplt=plt.imshow(im_con)
+
 plt.show()
+cv.imwrite("Images/lennax.jpg",im_con*255)
 wrt=cv.cvtColor(np.float32(im_ergb*255),cv.COLOR_RGB2BGR)
+
+

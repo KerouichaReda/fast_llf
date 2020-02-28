@@ -8,11 +8,15 @@ this function require the following modules:
 ## Results
 
 <figure class="image">
-    <img src="jacek.jpg" width="200">
+    <img src="Images\jacek.jpg" width="200">
     <figcaption>orginal</figcaption>
-    <img src="jacek_smooth.jpg" width="200">
+    <img src="Images\jacek_smooth.jpg" width="200">
     <figcaption>smoothed</figcaption>
-    <img src="jacek_enhanced.jpg" width="200">
+    <img src="Images\jacek_enhanced.jpg" width="200">
     <figcaption>enhanced</figcaption>
 </figure>
 
+### Guided LLF
+![](Images/lennax.jpg)
+
+[1] Aubry, M., Paris, S., Hasinoff, S. W., Kautz, J., & Durand, F. (2014). Fast Local Laplacian Filters. ACM Transactions on Graphics, 33(5), 1–14. https://doi.org/10.1145/2629645
