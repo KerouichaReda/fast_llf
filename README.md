@@ -8,11 +8,11 @@ this function require the following modules:
 ## Results
 
 <figure class="image">
-    <img src="Images\jacek.jpg" width="200">
+    <img src="Images\jacek.jpg" width="600">
     <figcaption>orginal</figcaption>
-    <img src="Images\jacek_smooth.jpg" width="200">
+    <img src="Images\jacek_smooth.jpg" width="600">
     <figcaption>smoothed</figcaption>
-    <img src="Images\jacek_enhanced.jpg" width="200">
+    <img src="Images\jacek_enhanced.jpg" width="600">
     <figcaption>enhanced</figcaption>
 </figure>
 

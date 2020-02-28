@@ -29,7 +29,6 @@ im_con=np.concatenate((im1/255,im2/255,im_ergb),axis=1)
 imgplt=plt.imshow(im_con)
 
 plt.show()
-cv.imwrite("Images/lennax.jpg",im_con*255)
-wrt=cv.cvtColor(np.float32(im_ergb*255),cv.COLOR_RGB2BGR)
+
 
 
